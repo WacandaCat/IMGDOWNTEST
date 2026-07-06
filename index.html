@@ -46,21 +46,12 @@
       padding: 28px 0 10px;
     }
     .header img { width: 96px; }
-    .intro {
-      text-align: center;
-      margin-bottom: 12px;
-    }
+    .intro { text-align: center; margin-bottom: 12px; }
     .intro h1 {
       margin: 0 0 10px;
       font-size: clamp(1.7rem, 1.3rem + 2vw, 3rem);
       line-height: 1.08;
       letter-spacing: -0.045em;
-    }
-    .intro p {
-      margin: 0 auto;
-      max-width: 62ch;
-      color: var(--muted);
-      font-size: 0.98rem;
     }
     .notice {
       margin-bottom: 20px;
@@ -109,13 +100,8 @@
       color: var(--inverse);
       border-color: var(--primary);
     }
-    .btn-secondary {
-      background: var(--surface-muted);
-    }
-    .btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
+    .btn-secondary { background: var(--surface-muted); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .status {
       color: var(--muted);
       font-weight: 700;
@@ -167,9 +153,7 @@
       pointer-events: none;
     }
     .item.is-selected .overlay { opacity: 1; }
-    .meta {
-      padding: 14px 16px 16px;
-    }
+    .meta { padding: 14px 16px 16px; }
     .meta strong { display: block; margin-bottom: 4px; }
     .meta span { display: block; color: var(--muted); font-size: 0.9rem; margin-bottom: 12px; }
     .actions {
@@ -220,6 +204,8 @@
     .is-mobile .check { display: none; }
     .is-mobile .item { border-color: var(--border); }
     .is-mobile .bottom-bar { display: none; }
+    .is-ios .per-item-download { display: none !important; }
+    .is-ios .actions .per-item-open { flex: 1 1 100%; }
     @media (max-width: 768px) {
       .bottom-inner { flex-direction: column; align-items: stretch; }
       .download-btn { min-width: 100%; }
@@ -231,6 +217,10 @@
     <header class="header">
       <img src="https://slbs.shop/web/upload/slbs/images/logo/slbs/logo-default.svg" alt="SLBS logo" width="96" height="28">
     </header>
+
+    <section class="intro">
+      <h1>이미지 저장</h1>
+    </section>
 
     <section class="notice" id="browserNotice">
       브라우저 환경을 확인하는 중입니다.
@@ -313,7 +303,6 @@
     const isMobile = isIOS || isAndroid;
     const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
     const isKakao = /KAKAOTALK/i.test(ua);
-    const isInApp = /(KAKAOTALK|FBAN|FBAV|Instagram|NAVER|Line|wv)/i.test(ua);
 
     const body = document.body;
     const browserNotice = document.getElementById('browserNotice');
@@ -322,6 +311,7 @@
     const downloadBtn = document.getElementById('downloadBtn');
 
     if (isMobile) body.classList.add('is-mobile');
+    if (isIOS) body.classList.add('is-ios');
 
     function checks() {
       return [...document.querySelectorAll('.check')];
@@ -353,7 +343,9 @@
     }
 
     function updateNotice() {
-      if (isKakao) {
+      if (isIOS) {
+        browserNotice.innerHTML = '<strong>iPhone 브라우저</strong>에서는 다운로드 버튼을 숨기고 <strong>이미지 열기</strong>만 제공합니다. 열린 화면에서 길게 눌러 사진 저장을 사용하세요.';
+      } else if (isKakao) {
         browserNotice.innerHTML = '<strong>카카오톡 인앱브라우저</strong>에서는 다운로드가 자주 차단됩니다. 아래 <strong>이미지 열기</strong>를 눌러 새 브라우저 화면에서 저장하거나, 우측 상단 메뉴에서 외부 브라우저로 여는 방식을 권장합니다.';
       } else if (isSafari && isMobile) {
         browserNotice.innerHTML = '<strong>iPhone Safari</strong>에서는 자동 다운로드보다 <strong>이미지 열기</strong> 후 길게 눌러 사진 저장하는 방식이 더 안정적입니다.';
@@ -368,7 +360,7 @@
       const url = button.dataset.url;
       const filename = button.dataset.filename;
 
-      if (isKakao || (isSafari && isMobile)) {
+      if (isIOS || isKakao || (isSafari && isMobile)) {
         window.open(`/api/open?url=${encodeURIComponent(url)}`, '_blank', 'noopener,noreferrer');
         return;
       }
@@ -398,7 +390,7 @@
 
     async function handleBulkDownload() {
       const items = selectedItems();
-      if (!items.length) return;
+      if (!items.length || isIOS) return;
       const original = downloadBtn.textContent;
       downloadBtn.disabled = true;
       downloadBtn.textContent = 'DOWNLOADING...';
