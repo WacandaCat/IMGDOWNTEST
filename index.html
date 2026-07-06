@@ -18,6 +18,7 @@
       --primary: #111111;
       --inverse: #ffffff;
       --success: #1f6b3b;
+      --overlay: rgba(17, 17, 17, 0.48);
       --space-2: 0.5rem;
       --space-3: 0.75rem;
       --space-4: 1rem;
@@ -36,6 +37,7 @@
       color: var(--text);
       padding: 0 16px 116px;
     }
+    body.modal-open { overflow: hidden; }
     img { display: block; max-width: 100%; height: auto; }
     button, input, a { font: inherit; }
     .wrap { max-width: 1180px; margin: 0 auto; }
@@ -46,24 +48,13 @@
       padding: 28px 0 10px;
     }
     .header img { width: 96px; }
-    .intro { text-align: center; margin-bottom: 12px; }
+    .intro { text-align: center; margin-bottom: 20px; }
     .intro h1 {
       margin: 0 0 10px;
       font-size: clamp(1.7rem, 1.3rem + 2vw, 3rem);
       line-height: 1.08;
       letter-spacing: -0.045em;
     }
-    .notice {
-      margin-bottom: 20px;
-      padding: 14px 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      color: var(--muted);
-      line-height: 1.55;
-      box-shadow: var(--shadow);
-    }
-    .notice strong { color: var(--text); }
     .toolbar {
       position: sticky;
       top: 10px;
@@ -206,9 +197,49 @@
     .is-mobile .bottom-bar { display: none; }
     .is-ios .per-item-download { display: none !important; }
     .is-ios .actions .per-item-open { flex: 1 1 100%; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: var(--overlay);
+    }
+    .modal-backdrop.is-visible { display: flex; }
+    .modal {
+      width: min(100%, 460px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 24px 64px rgba(17,17,17,0.18);
+      padding: 22px;
+    }
+    .modal h2 {
+      margin: 0 0 10px;
+      font-size: 1.3rem;
+      line-height: 1.2;
+    }
+    .modal p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
     @media (max-width: 768px) {
       .bottom-inner { flex-direction: column; align-items: stretch; }
       .download-btn { min-width: 100%; }
+      .modal { padding: 20px; border-radius: 20px; }
+      .modal-actions .btn { width: 100%; }
     }
   </style>
 </head>
@@ -217,9 +248,9 @@
     <header class="header">
       <img src="https://slbs.shop/web/upload/slbs/images/logo/slbs/logo-default.svg" alt="SLBS logo" width="96" height="28">
     </header>
-  </br<>
-    <section class="notice" id="browserNotice">
-      브라우저 환경을 확인하는 중입니다.
+
+    <section class="intro">
+      <h1>이미지 저장</h1>
     </section>
 
     <section class="toolbar desktop-only">
@@ -235,6 +266,8 @@
         <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202605/6d44f87c18a87e9bd8072da3535c0425.png" data-filename="slbs-image-1.png" aria-label="image-1 선택">
         <div class="thumb"><div class="overlay"></div><img src="https://slbs.shop/web/product/medium/202605/6d44f87c18a87e9bd8072da3535c0425.png" alt="image-1" loading="lazy" width="800" height="800"></div>
         <div class="meta">
+          <strong>image-1</strong>
+          <span>slbs-image-1.png</span>
           <div class="actions">
             <button class="btn btn-primary per-item-download" type="button" data-url="https://slbs.shop/web/product/medium/202605/6d44f87c18a87e9bd8072da3535c0425.png" data-filename="slbs-image-1.png">저장하기</button>
             <a class="btn btn-secondary per-item-open" href="/api/open?url=https%3A%2F%2Fslbs.shop%2Fweb%2Fproduct%2Fmedium%2F202605%2F6d44f87c18a87e9bd8072da3535c0425.png" target="_blank" rel="noopener noreferrer">이미지 열기</a>
@@ -246,7 +279,9 @@
         <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202605/67ba7b450c3397ed08b14518b11ba88a.png" data-filename="slbs-image-2.png" aria-label="image-2 선택">
         <div class="thumb"><div class="overlay"></div><img src="https://slbs.shop/web/product/medium/202605/67ba7b450c3397ed08b14518b11ba88a.png" alt="image-2" loading="lazy" width="800" height="800"></div>
         <div class="meta">
-           <div class="actions">
+          <strong>image-2</strong>
+          <span>slbs-image-2.png</span>
+          <div class="actions">
             <button class="btn btn-primary per-item-download" type="button" data-url="https://slbs.shop/web/product/medium/202605/67ba7b450c3397ed08b14518b11ba88a.png" data-filename="slbs-image-2.png">저장하기</button>
             <a class="btn btn-secondary per-item-open" href="/api/open?url=https%3A%2F%2Fslbs.shop%2Fweb%2Fproduct%2Fmedium%2F202605%2F67ba7b450c3397ed08b14518b11ba88a.png" target="_blank" rel="noopener noreferrer">이미지 열기</a>
           </div>
@@ -257,6 +292,8 @@
         <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202510/6dbea70f3b8c94fec0a8103154d1f02a.png" data-filename="slbs-image-3.png" aria-label="image-3 선택">
         <div class="thumb"><div class="overlay"></div><img src="https://slbs.shop/web/product/medium/202510/6dbea70f3b8c94fec0a8103154d1f02a.png" alt="image-3" loading="lazy" width="800" height="800"></div>
         <div class="meta">
+          <strong>image-3</strong>
+          <span>slbs-image-3.png</span>
           <div class="actions">
             <button class="btn btn-primary per-item-download" type="button" data-url="https://slbs.shop/web/product/medium/202510/6dbea70f3b8c94fec0a8103154d1f02a.png" data-filename="slbs-image-3.png">저장하기</button>
             <a class="btn btn-secondary per-item-open" href="/api/open?url=https%3A%2F%2Fslbs.shop%2Fweb%2Fproduct%2Fmedium%2F202510%2F6dbea70f3b8c94fec0a8103154d1f02a.png" target="_blank" rel="noopener noreferrer">이미지 열기</a>
@@ -268,6 +305,8 @@
         <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202407/ad9e9160b1b1ff02fa8534988042c34c.png" data-filename="slbs-image-4.png" aria-label="image-4 선택">
         <div class="thumb"><div class="overlay"></div><img src="https://slbs.shop/web/product/medium/202407/ad9e9160b1b1ff02fa8534988042c34c.png" alt="image-4" loading="lazy" width="800" height="800"></div>
         <div class="meta">
+          <strong>image-4</strong>
+          <span>slbs-image-4.png</span>
           <div class="actions">
             <button class="btn btn-primary per-item-download" type="button" data-url="https://slbs.shop/web/product/medium/202407/ad9e9160b1b1ff02fa8534988042c34c.png" data-filename="slbs-image-4.png">저장하기</button>
             <a class="btn btn-secondary per-item-open" href="/api/open?url=https%3A%2F%2Fslbs.shop%2Fweb%2Fproduct%2Fmedium%2F202407%2Fad9e9160b1b1ff02fa8534988042c34c.png" target="_blank" rel="noopener noreferrer">이미지 열기</a>
@@ -284,6 +323,16 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="browserModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDescription">
+      <h2 id="modalTitle">브라우저 안내</h2>
+      <p id="modalDescription">브라우저 환경을 확인하는 중입니다.</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" type="button" id="closeModal">확인</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const ua = navigator.userAgent || '';
     const isIOS = /iPhone|iPad|iPod/i.test(ua);
@@ -293,10 +342,13 @@
     const isKakao = /KAKAOTALK/i.test(ua);
 
     const body = document.body;
-    const browserNotice = document.getElementById('browserNotice');
     const message = document.getElementById('message');
     const statusText = document.getElementById('statusText');
     const downloadBtn = document.getElementById('downloadBtn');
+    const browserModal = document.getElementById('browserModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDescription = document.getElementById('modalDescription');
+    const closeModal = document.getElementById('closeModal');
 
     if (isMobile) body.classList.add('is-mobile');
     if (isIOS) body.classList.add('is-ios');
@@ -330,17 +382,32 @@
       setTimeout(() => URL.revokeObjectURL(url), 1200);
     }
 
-    function updateNotice() {
+    function openModal(title, description) {
+      modalTitle.textContent = title;
+      modalDescription.innerHTML = description;
+      browserModal.classList.add('is-visible');
+      browserModal.setAttribute('aria-hidden', 'false');
+      body.classList.add('modal-open');
+      closeModal.focus();
+    }
+
+    function closeBrowserModal() {
+      browserModal.classList.remove('is-visible');
+      browserModal.setAttribute('aria-hidden', 'true');
+      body.classList.remove('modal-open');
+    }
+
+    function showBrowserGuide() {
       if (isIOS) {
-        browserNotice.innerHTML = '<strong>iPhone 브라우저</strong>에서는 다운로드 버튼을 숨기고 <strong>이미지 열기</strong>만 제공합니다. 열린 화면에서 길게 눌러 사진 저장을 사용하세요.';
+        openModal('iPhone 브라우저 안내', '<strong>iPhone 브라우저</strong>에서는 다운로드 버튼을 숨기고 <strong>이미지 열기</strong>만 제공합니다. 열린 화면에서 길게 눌러 사진 저장을 사용하세요.');
       } else if (isKakao) {
-        browserNotice.innerHTML = '<strong>카카오톡 인앱브라우저</strong>에서는 다운로드가 자주 차단됩니다. 아래 <strong>이미지 열기</strong>를 눌러 새 브라우저 화면에서 저장하거나, 우측 상단 메뉴에서 외부 브라우저로 여는 방식을 권장합니다.';
+        openModal('카카오톡 브라우저 안내', '<strong>카카오톡 인앱브라우저</strong>에서는 다운로드가 자주 차단됩니다. <strong>이미지 열기</strong>를 눌러 새 브라우저 화면에서 저장하거나, 우측 상단 메뉴에서 외부 브라우저로 여는 방식을 권장합니다.');
       } else if (isSafari && isMobile) {
-        browserNotice.innerHTML = '<strong>iPhone Safari</strong>에서는 자동 다운로드보다 <strong>이미지 열기</strong> 후 길게 눌러 사진 저장하는 방식이 더 안정적입니다.';
+        openModal('Safari 안내', '<strong>iPhone Safari</strong>에서는 자동 다운로드보다 <strong>이미지 열기</strong> 후 길게 눌러 사진 저장하는 방식이 더 안정적입니다.');
       } else if (isMobile) {
-        browserNotice.innerHTML = '<strong>모바일 브라우저</strong>에서는 카드별 <strong>저장하기</strong> 또는 <strong>이미지 열기</strong>를 사용하세요. 일괄 다운로드는 PC에서만 유지됩니다.';
+        openModal('모바일 브라우저 안내', '<strong>모바일 브라우저</strong>에서는 카드별 <strong>저장하기</strong> 또는 <strong>이미지 열기</strong>를 사용하세요. 일괄 다운로드는 PC에서만 유지됩니다.');
       } else {
-        browserNotice.innerHTML = '<strong>PC 브라우저</strong>에서는 다중 선택 후 일괄 다운로드를 사용할 수 있습니다. 모바일과 인앱브라우저에서는 카드별 저장 흐름이 더 안정적입니다.';
+        openModal('PC 브라우저 안내', '<strong>PC 브라우저</strong>에서는 다중 선택 후 일괄 다운로드를 사용할 수 있습니다. 모바일과 인앱브라우저에서는 카드별 저장 흐름이 더 안정적입니다.');
       }
     }
 
@@ -418,9 +485,16 @@
       button.addEventListener('click', () => handlePerItemDownload(button));
     });
     downloadBtn?.addEventListener('click', handleBulkDownload);
+    closeModal?.addEventListener('click', closeBrowserModal);
+    browserModal?.addEventListener('click', (event) => {
+      if (event.target === browserModal) closeBrowserModal();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && browserModal.classList.contains('is-visible')) closeBrowserModal();
+    });
 
-    updateNotice();
     updateCount();
+    showBrowserGuide();
   </script>
 </body>
 </html>
