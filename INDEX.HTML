@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bulk-image-download</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0 24px 120px;
+      background: #ffffff;
+      font-family: Arial, sans-serif;
+    }
+    .header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 28px 0 24px;
+    }
+    .logo {
+      display: block;
+      width: 96px;
+      height: auto;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-bottom: 24px;
+    }
+    .control-btn,
+    .download-btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      height: 48px;
+      border: 0;
+      background: #111111;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      text-align: center;
+      padding: 0 18px;
+    }
+    .control-btn {
+      min-width: 132px;
+      padding: 0 28px;
+      border-radius: 999px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .item {
+      position: relative;
+      border: 2px solid transparent;
+      background: transparent;
+      transition: border-color 0.18s ease, background-color 0.18s ease;
+    }
+    .item.is-selected {
+      border-color: #111111;
+      background: rgba(0, 0, 0, 0.04);
+    }
+    .check {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 3;
+      width: 22px;
+      height: 22px;
+      accent-color: #111111;
+      cursor: pointer;
+    }
+    .thumb {
+      position: relative;
+    }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(240, 240, 240, 0.42);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+    }
+    .item.is-selected .overlay {
+      opacity: 1;
+    }
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #f5f5f5;
+    }
+    .bottom-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      background: #ffffff;
+      border-top: 1px solid #d9d9d9;
+      padding: 16px 24px;
+    }
+    .bottom-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .download-btn {
+      width: 100%;
+      max-width: 360px;
+      height: 52px;
+      border-radius: 0;
+      gap: 8px;
+    }
+    .download-count {
+      display: inline-block;
+    }
+    @media (max-width: 640px) {
+      body { padding: 0 16px 112px; }
+      .bottom-bar { padding: 12px 16px; }
+      .controls { gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <img class="logo" src="https://slbs.shop/web/upload/slbs/images/logo/slbs/logo-default.svg" alt="SLBS logo" width="96" height="28">
+  </header>
+
+  <div class="controls">
+    <button class="control-btn" id="selectAll" type="button">전체선택</button>
+    <button class="control-btn" id="clearAll" type="button">전체해제</button>
+  </div>
+
+  <div class="grid" id="imageGrid">
+    <div class="item">
+      <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202605/6d44f87c18a87e9bd8072da3535c0425.png" aria-label="image-1 선택">
+      <div class="thumb">
+        <div class="overlay"></div>
+        <img src="https://slbs.shop/web/product/medium/202605/6d44f87c18a87e9bd8072da3535c0425.png" alt="image-1" loading="lazy">
+      </div>
+    </div>
+    <div class="item">
+      <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202605/67ba7b450c3397ed08b14518b11ba88a.png" aria-label="image-2 선택">
+      <div class="thumb">
+        <div class="overlay"></div>
+        <img src="https://slbs.shop/web/product/medium/202605/67ba7b450c3397ed08b14518b11ba88a.png" alt="image-2" loading="lazy">
+      </div>
+    </div>
+    <div class="item">
+      <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202510/6dbea70f3b8c94fec0a8103154d1f02a.png" aria-label="image-3 선택">
+      <div class="thumb">
+        <div class="overlay"></div>
+        <img src="https://slbs.shop/web/product/medium/202510/6dbea70f3b8c94fec0a8103154d1f02a.png" alt="image-3" loading="lazy">
+      </div>
+    </div>
+    <div class="item">
+      <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202407/ad9e9160b1b1ff02fa8534988042c34c.png" aria-label="image-4 선택">
+      <div class="thumb">
+        <div class="overlay"></div>
+        <img src="https://slbs.shop/web/product/medium/202407/ad9e9160b1b1ff02fa8534988042c34c.png" alt="image-4" loading="lazy">
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="bottom-inner">
+      <button class="download-btn" id="downloadAll" type="button">
+        <span class="download-count" id="selectedCount">(0)</span>
+        <span>DOWNLOAD</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const checks = () => [...document.querySelectorAll('.check')];
+    const selectedCount = document.getElementById('selectedCount');
+
+    function syncVisualState() {
+      checks().forEach(el => {
+        const item = el.closest('.item');
+        item.classList.toggle('is-selected', el.checked);
+      });
+    }
+
+    function updateCount() {
+      const count = checks().filter(el => el.checked).length;
+      selectedCount.textContent = `(${count})`;
+      syncVisualState();
+    }
+
+    function triggerDownload(url) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download', '');
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    document.getElementById('selectAll').addEventListener('click', () => {
+      checks().forEach(el => el.checked = true);
+      updateCount();
+    });
+
+    document.getElementById('clearAll').addEventListener('click', () => {
+      checks().forEach(el => el.checked = false);
+      updateCount();
+    });
+
+    checks().forEach(el => el.addEventListener('change', updateCount));
+
+    document.getElementById('downloadAll').addEventListener('click', () => {
+      const selected = checks().filter(el => el.checked).map(el => el.dataset.url);
+      selected.forEach((url, index) => {
+        setTimeout(() => triggerDownload(url), index * 250);
+      });
+    });
+
+    updateCount();
+  </script>
+</body>
+</html>
