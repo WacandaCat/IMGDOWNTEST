@@ -24,7 +24,6 @@
       --space-6: 1.5rem;
       --space-8: 2rem;
       --radius: 18px;
-      --radius-sm: 12px;
       --shadow: 0 16px 40px rgba(17, 17, 17, 0.08);
     }
     * { box-sizing: border-box; }
@@ -45,10 +44,7 @@
       padding: 28px 0 18px;
     }
     .header img { width: 96px; }
-    .intro {
-      text-align: center;
-      margin-bottom: 24px;
-    }
+    .intro { text-align: center; margin-bottom: 24px; }
     .intro h1 {
       margin: 0 0 10px;
       font-size: clamp(1.75rem, 1.3rem + 2vw, 3rem);
@@ -93,15 +89,8 @@
       border-color: var(--primary);
       color: var(--inverse);
     }
-    .btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-    .status {
-      color: var(--muted);
-      font-weight: 700;
-      padding: 0 8px;
-    }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .status { color: var(--muted); font-weight: 700; padding: 0 8px; }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -148,9 +137,7 @@
       pointer-events: none;
     }
     .item.is-selected .overlay { opacity: 1; }
-    .meta {
-      padding: 14px 16px 16px;
-    }
+    .meta { padding: 14px 16px 16px; }
     .meta strong { display: block; margin-bottom: 4px; }
     .meta span { color: var(--muted); font-size: 0.9rem; }
     .bottom-bar {
@@ -201,8 +188,8 @@
     </header>
 
     <section class="intro">
-      <h1>선택한 이미지를 실제 파일로 내려받도록 구성한 Vercel 버전입니다.</h1>
-      <p>외부 이미지 URL을 직접 여는 대신, Vercel 서버 함수를 통해 같은 사이트 파일 다운로드로 처리합니다. 여러 장 선택 시에는 ZIP으로 한 번에 저장됩니다.</p>
+      <h1>선택한 이미지를 개별 파일로 순차 다운로드하는 모바일 대응 버전입니다.</h1>
+      <p>ZIP 파일을 만들지 않고, 선택한 이미지 각각을 같은 사이트 다운로드 응답으로 순서대로 받도록 바꿨습니다. 모바일 환경에서 압축 해제 없이 바로 접근하기 쉽도록 구성했습니다.</p>
     </section>
 
     <section class="toolbar">
@@ -216,34 +203,22 @@
     <main class="grid" id="imageGrid">
       <article class="item">
         <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202605/6d44f87c18a87e9bd8072da3535c0425.png" data-filename="slbs-image-1.png" aria-label="image-1 선택">
-        <div class="thumb">
-          <div class="overlay"></div>
-          <img src="https://slbs.shop/web/product/medium/202605/6d44f87c18a87e9bd8072da3535c0425.png" alt="image-1" loading="lazy" width="800" height="800">
-        </div>
+        <div class="thumb"><div class="overlay"></div><img src="https://slbs.shop/web/product/medium/202605/6d44f87c18a87e9bd8072da3535c0425.png" alt="image-1" loading="lazy" width="800" height="800"></div>
         <div class="meta"><strong>image-1</strong><span>slbs-image-1.png</span></div>
       </article>
       <article class="item">
         <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202605/67ba7b450c3397ed08b14518b11ba88a.png" data-filename="slbs-image-2.png" aria-label="image-2 선택">
-        <div class="thumb">
-          <div class="overlay"></div>
-          <img src="https://slbs.shop/web/product/medium/202605/67ba7b450c3397ed08b14518b11ba88a.png" alt="image-2" loading="lazy" width="800" height="800">
-        </div>
+        <div class="thumb"><div class="overlay"></div><img src="https://slbs.shop/web/product/medium/202605/67ba7b450c3397ed08b14518b11ba88a.png" alt="image-2" loading="lazy" width="800" height="800"></div>
         <div class="meta"><strong>image-2</strong><span>slbs-image-2.png</span></div>
       </article>
       <article class="item">
         <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202510/6dbea70f3b8c94fec0a8103154d1f02a.png" data-filename="slbs-image-3.png" aria-label="image-3 선택">
-        <div class="thumb">
-          <div class="overlay"></div>
-          <img src="https://slbs.shop/web/product/medium/202510/6dbea70f3b8c94fec0a8103154d1f02a.png" alt="image-3" loading="lazy" width="800" height="800">
-        </div>
+        <div class="thumb"><div class="overlay"></div><img src="https://slbs.shop/web/product/medium/202510/6dbea70f3b8c94fec0a8103154d1f02a.png" alt="image-3" loading="lazy" width="800" height="800"></div>
         <div class="meta"><strong>image-3</strong><span>slbs-image-3.png</span></div>
       </article>
       <article class="item">
         <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202407/ad9e9160b1b1ff02fa8534988042c34c.png" data-filename="slbs-image-4.png" aria-label="image-4 선택">
-        <div class="thumb">
-          <div class="overlay"></div>
-          <img src="https://slbs.shop/web/product/medium/202407/ad9e9160b1b1ff02fa8534988042c34c.png" alt="image-4" loading="lazy" width="800" height="800">
-        </div>
+        <div class="thumb"><div class="overlay"></div><img src="https://slbs.shop/web/product/medium/202407/ad9e9160b1b1ff02fa8534988042c34c.png" alt="image-4" loading="lazy" width="800" height="800"></div>
         <div class="meta"><strong>image-4</strong><span>slbs-image-4.png</span></div>
       </article>
     </main>
@@ -263,9 +238,7 @@
     const statusText = document.getElementById('statusText');
 
     function selectedItems() {
-      return checks()
-        .filter((el) => el.checked)
-        .map((el) => ({ url: el.dataset.url, filename: el.dataset.filename }));
+      return checks().filter((el) => el.checked).map((el) => ({ url: el.dataset.url, filename: el.dataset.filename }));
     }
 
     function syncVisualState() {
@@ -277,7 +250,7 @@
       downloadBtn.disabled = count === 0;
       downloadBtn.textContent = `(${count}) DOWNLOAD`;
       statusText.textContent = `${count}개 선택됨`;
-      message.textContent = count === 0 ? '선택된 이미지가 없습니다.' : count === 1 ? '1개 파일로 다운로드합니다.' : `${count}개 이미지를 ZIP으로 다운로드합니다.`;
+      message.textContent = count === 0 ? '선택된 이미지가 없습니다.' : `${count}개 이미지를 개별 파일로 다운로드합니다.`;
       syncVisualState();
     }
 
@@ -292,33 +265,36 @@
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
+    async function downloadSingle(item, index, total) {
+      message.textContent = `${index + 1}/${total} 다운로드 준비 중...`;
+      const params = new URLSearchParams({ url: item.url, filename: item.filename });
+      const response = await fetch(`/api/download?${params.toString()}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `${item.filename} 다운로드 실패`);
+      }
+      const disposition = response.headers.get('Content-Disposition') || '';
+      const match = disposition.match(/filename="?([^";]+)"?/i);
+      const filename = match ? match[1] : item.filename;
+      const blob = await response.blob();
+      triggerBlobDownload(blob, filename);
+      message.textContent = `${index + 1}/${total} 다운로드 완료`;
+      await new Promise((resolve) => setTimeout(resolve, 700));
+    }
+
     async function startDownload() {
       const items = selectedItems();
       if (!items.length) return;
 
       const originalLabel = downloadBtn.textContent;
       downloadBtn.disabled = true;
-      downloadBtn.textContent = 'PREPARING...';
-      message.textContent = '다운로드 파일을 생성하는 중입니다.';
+      downloadBtn.textContent = 'DOWNLOADING...';
 
       try {
-        const response = await fetch('/api/download', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items })
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText || '다운로드 생성에 실패했습니다.');
+        for (let i = 0; i < items.length; i += 1) {
+          await downloadSingle(items[i], i, items.length);
         }
-
-        const disposition = response.headers.get('Content-Disposition') || '';
-        const match = disposition.match(/filename="?([^";]+)"?/i);
-        const filename = match ? match[1] : (items.length === 1 ? items[0].filename : 'slbs-images.zip');
-        const blob = await response.blob();
-        triggerBlobDownload(blob, filename);
-        message.textContent = '다운로드가 시작되었습니다.';
+        message.textContent = `${items.length}개 이미지 다운로드가 완료되었습니다.`;
       } catch (error) {
         message.textContent = error.message || '다운로드 중 오류가 발생했습니다.';
         alert(error.message || '다운로드 중 오류가 발생했습니다.');
