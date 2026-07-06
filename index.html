@@ -3,231 +3,341 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bulk-image-download</title>
+  <title>SLBS Image Downloader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #f7f6f2;
+      --surface: #ffffff;
+      --surface-2: #f2efe9;
+      --text: #191919;
+      --muted: #6f6a63;
+      --border: #dfdbd4;
+      --primary: #111111;
+      --inverse: #ffffff;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --radius: 18px;
+      --radius-sm: 12px;
+      --shadow: 0 16px 40px rgba(17, 17, 17, 0.08);
+    }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 0 24px 120px;
-      background: #ffffff;
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 0 20px 120px;
     }
+    img { display: block; max-width: 100%; height: auto; }
+    button, input { font: inherit; }
+    .wrap { max-width: 1180px; margin: 0 auto; }
     .header {
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 28px 0 24px;
+      padding: 28px 0 18px;
     }
-    .logo {
-      display: block;
-      width: 96px;
-      height: auto;
+    .header img { width: 96px; }
+    .intro {
+      text-align: center;
+      margin-bottom: 24px;
     }
-    .controls {
+    .intro h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.75rem, 1.3rem + 2vw, 3rem);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+    .intro p {
+      margin: 0 auto;
+      max-width: 60ch;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+    .toolbar {
+      position: sticky;
+      top: 12px;
+      z-index: 5;
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       gap: 12px;
       flex-wrap: wrap;
-      padding-bottom: 24px;
-    }
-    .control-btn,
-    .download-btn {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      height: 48px;
-      border: 0;
-      background: #111111;
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      cursor: pointer;
-      text-align: center;
-      padding: 0 18px;
-    }
-    .control-btn {
-      min-width: 132px;
-      padding: 0 28px;
+      background: rgba(247, 246, 242, 0.88);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
       border-radius: 999px;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    .toolbar-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      min-height: 46px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 0 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--inverse);
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .status {
+      color: var(--muted);
+      font-weight: 700;
+      padding: 0 8px;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 16px;
     }
     .item {
       position: relative;
-      border: 2px solid transparent;
-      background: transparent;
-      transition: border-color 0.18s ease, background-color 0.18s ease;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: border-color 0.18s ease, transform 0.18s ease;
     }
-    .item.is-selected {
-      border-color: #111111;
-      background: rgba(0, 0, 0, 0.04);
-    }
+    .item:hover { transform: translateY(-2px); }
+    .item.is-selected { border-color: var(--primary); }
     .check {
       position: absolute;
-      top: 12px;
-      left: 12px;
-      z-index: 3;
-      width: 22px;
-      height: 22px;
-      accent-color: #111111;
+      top: 14px;
+      left: 14px;
+      z-index: 2;
+      width: 24px;
+      height: 24px;
+      accent-color: var(--primary);
       cursor: pointer;
     }
     .thumb {
       position: relative;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      background: var(--surface-2);
+    }
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     .overlay {
       position: absolute;
       inset: 0;
-      background: rgba(240, 240, 240, 0.42);
+      background: rgba(17, 17, 17, 0.14);
       opacity: 0;
-      pointer-events: none;
       transition: opacity 0.18s ease;
+      pointer-events: none;
     }
-    .item.is-selected .overlay {
-      opacity: 1;
+    .item.is-selected .overlay { opacity: 1; }
+    .meta {
+      padding: 14px 16px 16px;
     }
-    img {
-      display: block;
-      width: 100%;
-      height: auto;
-      background: #f5f5f5;
-    }
+    .meta strong { display: block; margin-bottom: 4px; }
+    .meta span { color: var(--muted); font-size: 0.9rem; }
     .bottom-bar {
       position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 20;
-      background: #ffffff;
-      border-top: 1px solid #d9d9d9;
-      padding: 16px 24px;
+      left: 0; right: 0; bottom: 0;
+      z-index: 10;
+      border-top: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+      padding: 14px 20px;
     }
     .bottom-inner {
-      max-width: 1280px;
+      max-width: 1180px;
       margin: 0 auto;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .message {
+      color: var(--muted);
+      font-weight: 600;
+      min-height: 24px;
     }
     .download-btn {
-      width: 100%;
-      max-width: 360px;
-      height: 52px;
-      border-radius: 0;
-      gap: 8px;
-    }
-    .download-count {
-      display: inline-block;
+      min-width: min(360px, 100%);
+      min-height: 52px;
+      border: 0;
+      background: var(--primary);
+      color: var(--inverse);
+      border-radius: 999px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      cursor: pointer;
     }
     @media (max-width: 640px) {
-      body { padding: 0 16px 112px; }
-      .bottom-bar { padding: 12px 16px; }
-      .controls { gap: 8px; }
+      body { padding: 0 16px 116px; }
+      .toolbar { border-radius: 22px; }
+      .bottom-inner { flex-direction: column; align-items: stretch; }
+      .download-btn { min-width: 100%; }
     }
   </style>
 </head>
 <body>
-  <header class="header">
-    <img class="logo" src="https://slbs.shop/web/upload/slbs/images/logo/slbs/logo-default.svg" alt="SLBS logo" width="96" height="28">
-  </header>
+  <div class="wrap">
+    <header class="header">
+      <img src="https://slbs.shop/web/upload/slbs/images/logo/slbs/logo-default.svg" alt="SLBS logo" width="96" height="28">
+    </header>
 
-  <div class="controls">
-    <button class="control-btn" id="selectAll" type="button">전체선택</button>
-    <button class="control-btn" id="clearAll" type="button">전체해제</button>
-  </div>
+    <section class="intro">
+      <h1>선택한 이미지를 실제 파일로 내려받도록 구성한 Vercel 버전입니다.</h1>
+      <p>외부 이미지 URL을 직접 여는 대신, Vercel 서버 함수를 통해 같은 사이트 파일 다운로드로 처리합니다. 여러 장 선택 시에는 ZIP으로 한 번에 저장됩니다.</p>
+    </section>
 
-  <div class="grid" id="imageGrid">
-    <div class="item">
-      <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202605/6d44f87c18a87e9bd8072da3535c0425.png" aria-label="image-1 선택">
-      <div class="thumb">
-        <div class="overlay"></div>
-        <img src="https://slbs.shop/web/product/medium/202605/6d44f87c18a87e9bd8072da3535c0425.png" alt="image-1" loading="lazy">
+    <section class="toolbar">
+      <div class="toolbar-group">
+        <button class="btn" id="selectAll" type="button">전체선택</button>
+        <button class="btn" id="clearAll" type="button">전체해제</button>
       </div>
-    </div>
-    <div class="item">
-      <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202605/67ba7b450c3397ed08b14518b11ba88a.png" aria-label="image-2 선택">
-      <div class="thumb">
-        <div class="overlay"></div>
-        <img src="https://slbs.shop/web/product/medium/202605/67ba7b450c3397ed08b14518b11ba88a.png" alt="image-2" loading="lazy">
-      </div>
-    </div>
-    <div class="item">
-      <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202510/6dbea70f3b8c94fec0a8103154d1f02a.png" aria-label="image-3 선택">
-      <div class="thumb">
-        <div class="overlay"></div>
-        <img src="https://slbs.shop/web/product/medium/202510/6dbea70f3b8c94fec0a8103154d1f02a.png" alt="image-3" loading="lazy">
-      </div>
-    </div>
-    <div class="item">
-      <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202407/ad9e9160b1b1ff02fa8534988042c34c.png" aria-label="image-4 선택">
-      <div class="thumb">
-        <div class="overlay"></div>
-        <img src="https://slbs.shop/web/product/medium/202407/ad9e9160b1b1ff02fa8534988042c34c.png" alt="image-4" loading="lazy">
-      </div>
-    </div>
+      <div class="status" id="statusText">0개 선택됨</div>
+    </section>
+
+    <main class="grid" id="imageGrid">
+      <article class="item">
+        <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202605/6d44f87c18a87e9bd8072da3535c0425.png" data-filename="slbs-image-1.png" aria-label="image-1 선택">
+        <div class="thumb">
+          <div class="overlay"></div>
+          <img src="https://slbs.shop/web/product/medium/202605/6d44f87c18a87e9bd8072da3535c0425.png" alt="image-1" loading="lazy" width="800" height="800">
+        </div>
+        <div class="meta"><strong>image-1</strong><span>slbs-image-1.png</span></div>
+      </article>
+      <article class="item">
+        <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202605/67ba7b450c3397ed08b14518b11ba88a.png" data-filename="slbs-image-2.png" aria-label="image-2 선택">
+        <div class="thumb">
+          <div class="overlay"></div>
+          <img src="https://slbs.shop/web/product/medium/202605/67ba7b450c3397ed08b14518b11ba88a.png" alt="image-2" loading="lazy" width="800" height="800">
+        </div>
+        <div class="meta"><strong>image-2</strong><span>slbs-image-2.png</span></div>
+      </article>
+      <article class="item">
+        <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202510/6dbea70f3b8c94fec0a8103154d1f02a.png" data-filename="slbs-image-3.png" aria-label="image-3 선택">
+        <div class="thumb">
+          <div class="overlay"></div>
+          <img src="https://slbs.shop/web/product/medium/202510/6dbea70f3b8c94fec0a8103154d1f02a.png" alt="image-3" loading="lazy" width="800" height="800">
+        </div>
+        <div class="meta"><strong>image-3</strong><span>slbs-image-3.png</span></div>
+      </article>
+      <article class="item">
+        <input class="check" type="checkbox" data-url="https://slbs.shop/web/product/medium/202407/ad9e9160b1b1ff02fa8534988042c34c.png" data-filename="slbs-image-4.png" aria-label="image-4 선택">
+        <div class="thumb">
+          <div class="overlay"></div>
+          <img src="https://slbs.shop/web/product/medium/202407/ad9e9160b1b1ff02fa8534988042c34c.png" alt="image-4" loading="lazy" width="800" height="800">
+        </div>
+        <div class="meta"><strong>image-4</strong><span>slbs-image-4.png</span></div>
+      </article>
+    </main>
   </div>
 
   <div class="bottom-bar">
     <div class="bottom-inner">
-      <button class="download-btn" id="downloadAll" type="button">
-        <span class="download-count" id="selectedCount">(0)</span>
-        <span>DOWNLOAD</span>
-      </button>
+      <div class="message" id="message">선택된 이미지가 없습니다.</div>
+      <button class="download-btn" id="downloadBtn" type="button" disabled>(0) DOWNLOAD</button>
     </div>
   </div>
 
   <script>
     const checks = () => [...document.querySelectorAll('.check')];
-    const selectedCount = document.getElementById('selectedCount');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const message = document.getElementById('message');
+    const statusText = document.getElementById('statusText');
+
+    function selectedItems() {
+      return checks()
+        .filter((el) => el.checked)
+        .map((el) => ({ url: el.dataset.url, filename: el.dataset.filename }));
+    }
 
     function syncVisualState() {
-      checks().forEach(el => {
-        const item = el.closest('.item');
-        item.classList.toggle('is-selected', el.checked);
-      });
+      checks().forEach((el) => el.closest('.item').classList.toggle('is-selected', el.checked));
     }
 
     function updateCount() {
-      const count = checks().filter(el => el.checked).length;
-      selectedCount.textContent = `(${count})`;
+      const count = selectedItems().length;
+      downloadBtn.disabled = count === 0;
+      downloadBtn.textContent = `(${count}) DOWNLOAD`;
+      statusText.textContent = `${count}개 선택됨`;
+      message.textContent = count === 0 ? '선택된 이미지가 없습니다.' : count === 1 ? '1개 파일로 다운로드합니다.' : `${count}개 이미지를 ZIP으로 다운로드합니다.`;
       syncVisualState();
     }
 
-    function triggerDownload(url) {
+    function triggerBlobDownload(blob, filename) {
+      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.setAttribute('download', '');
-      a.setAttribute('target', '_blank');
-      a.setAttribute('rel', 'noopener noreferrer');
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    async function startDownload() {
+      const items = selectedItems();
+      if (!items.length) return;
+
+      const originalLabel = downloadBtn.textContent;
+      downloadBtn.disabled = true;
+      downloadBtn.textContent = 'PREPARING...';
+      message.textContent = '다운로드 파일을 생성하는 중입니다.';
+
+      try {
+        const response = await fetch('/api/download', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || '다운로드 생성에 실패했습니다.');
+        }
+
+        const disposition = response.headers.get('Content-Disposition') || '';
+        const match = disposition.match(/filename="?([^";]+)"?/i);
+        const filename = match ? match[1] : (items.length === 1 ? items[0].filename : 'slbs-images.zip');
+        const blob = await response.blob();
+        triggerBlobDownload(blob, filename);
+        message.textContent = '다운로드가 시작되었습니다.';
+      } catch (error) {
+        message.textContent = error.message || '다운로드 중 오류가 발생했습니다.';
+        alert(error.message || '다운로드 중 오류가 발생했습니다.');
+      } finally {
+        downloadBtn.disabled = selectedItems().length === 0;
+        downloadBtn.textContent = originalLabel;
+      }
     }
 
     document.getElementById('selectAll').addEventListener('click', () => {
-      checks().forEach(el => el.checked = true);
+      checks().forEach((el) => { el.checked = true; });
       updateCount();
     });
-
     document.getElementById('clearAll').addEventListener('click', () => {
-      checks().forEach(el => el.checked = false);
+      checks().forEach((el) => { el.checked = false; });
       updateCount();
     });
-
-    checks().forEach(el => el.addEventListener('change', updateCount));
-
-    document.getElementById('downloadAll').addEventListener('click', () => {
-      const selected = checks().filter(el => el.checked).map(el => el.dataset.url);
-      selected.forEach((url, index) => {
-        setTimeout(() => triggerDownload(url), index * 250);
-      });
-    });
-
+    checks().forEach((el) => el.addEventListener('change', updateCount));
+    downloadBtn.addEventListener('click', startDownload);
     updateCount();
   </script>
 </body>
