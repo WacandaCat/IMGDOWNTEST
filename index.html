@@ -414,19 +414,34 @@
       body.classList.remove('modal-open');
     }
 
-    function showBrowserGuide() {
-      if (isIOS) {
-        openModal('iPhone 브라우저 안내', '<strong>iPhone 브라우저</strong>에서는 다운로드 버튼을 숨기고 <strong>이미지 열기</strong>만 제공합니다. 열린 화면에서 길게 눌러 사진 저장을 사용하세요.');
-      } else if (isKakao) {
-        openModal('카카오톡 브라우저 안내', '<strong>카카오톡 인앱브라우저</strong>에서는 다운로드가 자주 차단됩니다. <strong>이미지 열기</strong>를 눌러 새 브라우저 화면에서 저장하거나, 우측 상단 메뉴에서 외부 브라우저로 여는 방식을 권장합니다.');
-      } else if (isSafari && isMobile) {
-        openModal('Safari 안내', '<strong>iPhone Safari</strong>에서는 자동 다운로드보다 <strong>이미지 열기</strong> 후 길게 눌러 사진 저장하는 방식이 더 안정적입니다.');
-      } else if (isMobile) {
-        openModal('모바일 브라우저 안내', '<strong>모바일 브라우저</strong>에서는 카드별 <strong>저장하기</strong> 또는 <strong>이미지 열기</strong>를 사용하세요. 일괄 다운로드는 PC에서만 유지됩니다.');
-      } else {
-        openModal('PC 브라우저 안내', '<strong>PC 브라우저</strong>에서는 다중 선택 후 일괄 다운로드를 사용할 수 있습니다. 모바일과 인앱브라우저에서는 카드별 저장 흐름이 더 안정적입니다.');
-      }
-    }
+   function showBrowserGuide() {
+  if (isIOS) {
+    openModal(
+      '이미지 저장 안내',
+      'iPhone에서는 <strong>이미지 열기</strong>를 누른 뒤, 열린 화면에서 이미지를 길게 눌러 저장해 주세요.'
+    );
+  } else if (isKakao) {
+    openModal(
+      '이미지 저장 안내',
+      '현재 브라우저에서는 저장 방식이 다르게 동작할 수 있습니다. <strong>이미지 열기</strong>를 눌러 새 화면에서 저장해 주세요.'
+    );
+  } else if (isSafari && isMobile) {
+    openModal(
+      '이미지 저장 안내',
+      '모바일에서는 <strong>이미지 열기</strong> 후, 열린 화면에서 저장하는 방식이 가장 안정적입니다.'
+    );
+  } else if (isMobile) {
+    openModal(
+      '이미지 저장 안내',
+      '모바일에서는 각 이미지 아래의 <strong>저장하기</strong> 또는 <strong>이미지 열기</strong>를 이용해 저장할 수 있습니다.'
+    );
+  } else {
+    openModal(
+      '이미지 저장 안내',
+      '원하는 이미지를 선택한 뒤 아래의 <strong>DOWNLOAD</strong> 버튼으로 한 번에 저장할 수 있습니다.'
+    );
+  }
+}
 
     async function handlePerItemDownload(button) {
       const url = button.dataset.url;
