@@ -1,8 +1,5 @@
 {
-  "name": "vercel-image-downloader",
+  "name": "vercel-browser-adaptive-image-saver",
   "private": true,
-  "type": "module",
-  "dependencies": {
-    "jszip": "^3.10.1"
-  }
+  "type": "module"
 }
