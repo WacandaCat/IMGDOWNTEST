@@ -529,4 +529,30 @@
     showBrowserGuide();
   </script>
 </body>
+  <!-- 조회수 추적 (Supabase) -->
+<script>
+(function () {
+  var SUPABASE_URL = "https://ntmglyscsyqlxevpzszs.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_GvX_Fz9qVJN7v7T1_C_c8Q_Iowe58tu";
+
+  var PAGE_ID = "imgdowntest";  // ← 이 파일에 맞게 변경
+
+  try {
+    var key = "vc_" + PAGE_ID;
+    var today = new Date().toISOString().slice(0, 10);
+    if (localStorage.getItem(key) === today) return;
+    localStorage.setItem(key, today);
+  } catch (e) {}
+
+  fetch(SUPABASE_URL + "/rest/v1/rpc/increment_page_view", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": "Bearer " + SUPABASE_ANON_KEY
+    },
+    body: JSON.stringify({ p_page_id: PAGE_ID })
+  }).catch(function () {});
+})();
+</script>
 </html>
